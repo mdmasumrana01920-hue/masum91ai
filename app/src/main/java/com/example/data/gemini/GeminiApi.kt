@@ -1,4 +1,3 @@
-
 package com.example.data.gemini
 
 import com.squareup.moshi.Moshi
@@ -32,8 +31,7 @@ data class Candidate(
 )
 
 interface GeminiApiService {
-    // ➡️ এখানে সরাসরি এপিআই কী ইউআরএল এন্ডপয়েন্টের ভেতরেই পার্মানেন্টলি গেঁথে দেওয়া হলো।
-    // এর ফলে গিটহাবের নিউ ইয়র্ক ক্লাউড সার্ভার কোনোভাবেই রিকোয়েস্ট ব্লক করতে পারবে না।
+    // এখানে মডেলের নাম এবং আপনার API Key সরাসরি ইউআরএল-এ গেঁথে দেওয়া হলো
     @POST("v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBK1Stj-fd5ZkxDeVknz2C2FG-KLX1fR5w")
     suspend fun generateContent(
         @Body request: GenerateContentRequest
