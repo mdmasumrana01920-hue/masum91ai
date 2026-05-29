@@ -1,0 +1,6 @@
+{
+  "name": "Voice & Text Assistant",
+  "description": "An advanced background voice and text assistant that can trigger custom Gmail actions using the Gemini API.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
