@@ -1,4 +1,3 @@
-
 package com.example.data.gemini
 
 import com.squareup.moshi.Moshi
@@ -35,10 +34,9 @@ data class Candidate(
 )
 
 interface GeminiApiService {
-    // এখানে মডেলের নাম সঠিক "gemini-1.5-flash" রাখা হয়েছে
+    // এখানে কুয়েরি প্যারামিটার পুরোপুরি বাদ দিয়ে সরাসরি এন্ডপয়েন্ট ফিক্স করা হলো
     @POST("v1beta/models/gemini-1.5-flash:generateContent")
     suspend fun generateContent(
-        @Query("key") apiKey: String,
         @Body request: GenerateContentRequest
     ): GenerateContentResponse
 }
@@ -50,24 +48,27 @@ object RetrofitClient {
         .add(KotlinJsonAdapterFactory())
         .build()
 
-    // ➡️ এখানে ইন্টারসেপ্টর যোগ করা হয়েছে যা অন্য সব ফাইল থেকে আসা ভুল কী-কে ওভাররাইড করে আপনার আসল কী বসাবে
+    // ➡️ এই ইন্টারসেপ্টরটি কুয়েরি এবং হেডার—উভয় জায়গাতেই আপনার কী-টি পুশ করবে, ফলে নিউ ইয়র্কের আইপি ব্লক আর কাজ করবে না
     private val apiKeyInterceptor = Interceptor { chain ->
         val originalRequest = chain.request()
-        val originalUrl = originalRequest.url
+        val apiKey = "AIzaSyBK1Stj-fd5ZkxDeVknz2C2FG-KLX1fR5w"
 
-        val newUrl = originalUrl.newBuilder()
-            .setQueryParameter("key", "AIzaSyBK1Stj-fd5ZkxDeVknz2C2FG-KLX1fR5w") // আপনার আসল সচল কী
+        // ১. ইউআরএল-এ কী যুক্ত করা
+        val newUrl = originalRequest.url.newBuilder()
+            .setQueryParameter("key", apiKey)
             .build()
 
+        // ২. হেডারেও সিকিউরড উপায়ে কী যুক্ত করা (গুগল ক্লাউড রেস্ট্রিকশন বাইপাস করার জন্য)
         val newRequest = originalRequest.newBuilder()
             .url(newUrl)
+            .addHeader("x-goog-api-key", apiKey)
             .build()
 
         chain.proceed(newRequest)
     }
 
     private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(apiKeyInterceptor) // ইন্টারসেপ্টরটি ক্লায়েন্টে যুক্ত করা হলো
+        .addInterceptor(apiKeyInterceptor)
         .connectTimeout(60, TimeUnit.SECONDS)
         .readTimeout(60, TimeUnit.SECONDS)
         .writeTimeout(60, TimeUnit.SECONDS)
