@@ -1,3 +1,5 @@
+
+
 package com.example.data.gemini
 
 import com.squareup.moshi.Moshi
@@ -30,11 +32,19 @@ data class GenerateContentResponse(
 
 data class Candidate(
     val content: Content?
-)object RetrofitClient {
+)
+
+interface GeminiApiService {
+    // এখানে মডেলের নাম পরিবর্তন করে একদম সঠিক "gemini-1.5-flash" করে দেওয়া হয়েছে
+    @POST("v1beta/models/gemini-1.5-flash:generateContent")
+    suspend fun generateContent(
+        @Query("key") apiKey: String,
+        @Body request: GenerateContentRequest
+    ): GenerateContentResponse
+}
+
+object RetrofitClient {
     private const val BASE_URL = "https://generativelanguage.googleapis.com/"
-    
-    // ➡️ সরাসরি আপনার আসল API Key এখানে ফিক্স করে দেওয়া হলো ⬅️
-    const val GEMINI_API_KEY = "AIzaSyBK1Stj-fd5ZkxDeVknz2C2FG-KLX1fR5w"
 
     private val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
@@ -52,16 +62,19 @@ data class Candidate(
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
-        retrofit.create(GeminiApiService::class.java)
+        
+        val originalService = retrofit.create(GeminiApiService::class.java)
+        
+        // এখানে একটি ম্যাজিক করা হয়েছে: অন্য ফাইল থেকে যে কী-ই আসুক না কেন, 
+        // অ্যাপ ব্যাকগ্রাউন্ডে সবসময় আপনার আসল সচল API Key-টিই ব্যবহার করবে।
+        object : GeminiApiService {
+            override suspend fun generateContent(
+                apiKey: String,
+                request: GenerateContentRequest
+            ): GenerateContentResponse {
+                val realApiKey = "AIzaSyBK1Stj-fd5ZkxDeVknz2C2FG-KLX1fR5w"
+                return originalService.generateContent(realApiKey, request)
+            }
+        }
     }
 }
-
-
-interface GeminiApiService {
-    @POST("v1beta/models/gemini-3.5-flash:generateContent")
-    suspend fun generateContent(
-        @Query("key") apiKey: String,
-        @Body request: GenerateContentRequest
-    ): GenerateContentResponse
-}
-
