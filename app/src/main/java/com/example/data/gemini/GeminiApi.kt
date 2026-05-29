@@ -1,5 +1,3 @@
-
-
 package com.example.data.gemini
 
 import com.squareup.moshi.Moshi
@@ -35,10 +33,11 @@ data class Candidate(
 )
 
 interface GeminiApiService {
-    // এখানে মডেলের নাম পরিবর্তন করে একদম সঠিক "gemini-1.5-flash" করে দেওয়া হয়েছে
+    // এখানে মডেলের নাম পরিবর্তন করে সঠিক "gemini-1.5-flash" করা হয়েছে।
+    // এবং apiKey প্যারামিটারে সরাসরি আপনার আসল Key-টি ডিফল্ট ভ্যালু হিসেবে বসিয়ে দেওয়া হয়েছে।
     @POST("v1beta/models/gemini-1.5-flash:generateContent")
     suspend fun generateContent(
-        @Query("key") apiKey: String,
+        @Query("key") apiKey: String = "AIzaSyBK1Stj-fd5ZkxDeVknz2C2FG-KLX1fR5w",
         @Body request: GenerateContentRequest
     ): GenerateContentResponse
 }
@@ -62,19 +61,6 @@ object RetrofitClient {
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
-        
-        val originalService = retrofit.create(GeminiApiService::class.java)
-        
-        // এখানে একটি ম্যাজিক করা হয়েছে: অন্য ফাইল থেকে যে কী-ই আসুক না কেন, 
-        // অ্যাপ ব্যাকগ্রাউন্ডে সবসময় আপনার আসল সচল API Key-টিই ব্যবহার করবে।
-        object : GeminiApiService {
-            override suspend fun generateContent(
-                apiKey: String,
-                request: GenerateContentRequest
-            ): GenerateContentResponse {
-                val realApiKey = "AIzaSyBK1Stj-fd5ZkxDeVknz2C2FG-KLX1fR5w"
-                return originalService.generateContent(realApiKey, request)
-            }
-        }
+        retrofit.create(GeminiApiService::class.java)
     }
 }
