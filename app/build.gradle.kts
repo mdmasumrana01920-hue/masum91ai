@@ -119,3 +119,20 @@ dependencies {
   "ksp"(libs.androidx.room.compiler)
   "ksp"(libs.moshi.kotlin.codegen)
 }
+
+android {
+    ...
+    defaultConfig {
+        applicationId = "com.masum91ai.assistant" // আপনার অ্যাপের আইডি
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // ➡️ ঠিক এখানে নিচের লাইন দুটি পেস্ট করে দিন ⬅️
+        val myApiKey = "AIzaSyBK1Stj-fd5ZkxDeVknz2C2FG-KLX1fR5w"
+        buildConfigField("String", "GEMINI_API_KEY", "\"$myApiKey\"")
+    }
+}
