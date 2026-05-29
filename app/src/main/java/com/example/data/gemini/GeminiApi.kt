@@ -30,18 +30,11 @@ data class GenerateContentResponse(
 
 data class Candidate(
     val content: Content?
-)
-
-interface GeminiApiService {
-    @POST("v1beta/models/gemini-3.5-flash:generateContent")
-    suspend fun generateContent(
-        @Query("key") apiKey: String,
-        @Body request: GenerateContentRequest
-    ): GenerateContentResponse
-}
-
-object RetrofitClient {
+)object RetrofitClient {
     private const val BASE_URL = "https://generativelanguage.googleapis.com/"
+    
+    // ➡️ সরাসরি আপনার আসল API Key এখানে ফিক্স করে দেওয়া হলো ⬅️
+    const val GEMINI_API_KEY = "AIzaSyBK1Stj-fd5ZkxDeVknz2C2FG-KLX1fR5w"
 
     private val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
@@ -62,3 +55,13 @@ object RetrofitClient {
         retrofit.create(GeminiApiService::class.java)
     }
 }
+
+
+interface GeminiApiService {
+    @POST("v1beta/models/gemini-3.5-flash:generateContent")
+    suspend fun generateContent(
+        @Query("key") apiKey: String,
+        @Body request: GenerateContentRequest
+    ): GenerateContentResponse
+}
+
