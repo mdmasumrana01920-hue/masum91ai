@@ -130,9 +130,3 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        
-        // ➡️ ঠিক এখানে নিচের লাইন দুটি পেস্ট করে দিন ⬅️
-        val myApiKey = "AIzaSyBK1Stj-fd5ZkxDeVknz2C2FG-KLX1fR5w"
-        buildConfigField("String", "GEMINI_API_KEY", "\"$myApiKey\"")
-    }
-}
