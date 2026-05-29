@@ -1,7 +1,9 @@
+
 package com.example.data.gemini
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -33,11 +35,10 @@ data class Candidate(
 )
 
 interface GeminiApiService {
-    // এখানে মডেলের নাম পরিবর্তন করে সঠিক "gemini-1.5-flash" করা হয়েছে।
-    // এবং apiKey প্যারামিটারে সরাসরি আপনার আসল Key-টি ডিফল্ট ভ্যালু হিসেবে বসিয়ে দেওয়া হয়েছে।
+    // এখানে মডেলের নাম সঠিক "gemini-1.5-flash" রাখা হয়েছে
     @POST("v1beta/models/gemini-1.5-flash:generateContent")
     suspend fun generateContent(
-        @Query("key") apiKey: String = "AIzaSyBK1Stj-fd5ZkxDeVknz2C2FG-KLX1fR5w",
+        @Query("key") apiKey: String,
         @Body request: GenerateContentRequest
     ): GenerateContentResponse
 }
@@ -49,7 +50,24 @@ object RetrofitClient {
         .add(KotlinJsonAdapterFactory())
         .build()
 
+    // ➡️ এখানে ইন্টারসেপ্টর যোগ করা হয়েছে যা অন্য সব ফাইল থেকে আসা ভুল কী-কে ওভাররাইড করে আপনার আসল কী বসাবে
+    private val apiKeyInterceptor = Interceptor { chain ->
+        val originalRequest = chain.request()
+        val originalUrl = originalRequest.url
+
+        val newUrl = originalUrl.newBuilder()
+            .setQueryParameter("key", "AIzaSyBK1Stj-fd5ZkxDeVknz2C2FG-KLX1fR5w") // আপনার আসল সচল কী
+            .build()
+
+        val newRequest = originalRequest.newBuilder()
+            .url(newUrl)
+            .build()
+
+        chain.proceed(newRequest)
+    }
+
     private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(apiKeyInterceptor) // ইন্টারসেপ্টরটি ক্লায়েন্টে যুক্ত করা হলো
         .connectTimeout(60, TimeUnit.SECONDS)
         .readTimeout(60, TimeUnit.SECONDS)
         .writeTimeout(60, TimeUnit.SECONDS)
