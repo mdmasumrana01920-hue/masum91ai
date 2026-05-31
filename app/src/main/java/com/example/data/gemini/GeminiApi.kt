@@ -1,3 +1,4 @@
+
 package com.example.data.gemini
 
 import com.squareup.moshi.Moshi
@@ -7,9 +8,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
+import retrofit2.http.Query
 import java.util.concurrent.TimeUnit
 
-// জেমিনাই এপিআই-এর সঠিক ডেটা ফরম্যাট
 data class GenerateContentRequest(
     val contents: List<Content>
 )
@@ -32,9 +33,10 @@ data class Candidate(
 )
 
 interface GeminiApiService {
-    // এখানে আপনার একদম সঠিক এবং নতুন API Key টি নিখুঁতভাবে বসিয়ে দেওয়া হয়েছে
-    @POST("v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBK15tj-fd5ZkxDeVknz2C2FG-KLX1fR5w")
+    // এখানে URL থেকে সরাসরি কী সরিয়ে দেওয়া হলো, যাতে গিটহাব ব্লক না করে
+    @POST("v1beta/models/gemini-1.5-flash:generateContent")
     suspend fun generateContent(
+        @Query("key") apiKey: String,
         @Body request: GenerateContentRequest
     ): GenerateContentResponse
 }
