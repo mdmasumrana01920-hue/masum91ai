@@ -9,12 +9,13 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import java.util.concurrent.TimeUnit
 
+// জেমিনাই এপিআই-এর সঠিক ডেটা ফরম্যাট
 data class GenerateContentRequest(
-    val contents: List<Content>,
-    val systemInstruction: Content? = null
+    val contents: List<Content>
 )
 
 data class Content(
+    val role: String = "user",
     val parts: List<Part>
 )
 
@@ -31,8 +32,8 @@ data class Candidate(
 )
 
 interface GeminiApiService {
-    // এখানে মডেলের নাম এবং আপনার API Key সরাসরি ইউআরএল-এ গেঁথে দেওয়া হলো
-    @POST("v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBK1Stj-fd5ZkxDeVknz2C2FG-KLX1fR5w")
+    // এখানে আপনার একদম সঠিক এবং নতুন API Key টি নিখুঁতভাবে বসিয়ে দেওয়া হয়েছে
+    @POST("v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBK15tj-fd5ZkxDeVknz2C2FG-KLX1fR5w")
     suspend fun generateContent(
         @Body request: GenerateContentRequest
     ): GenerateContentResponse
