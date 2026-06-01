@@ -1,6 +1,6 @@
-
 package com.example.data.gemini
 
+import com.example.BuildConfig // .env থেকে এপিআই কি রিড করার জন্য এটি প্রয়োজন
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
@@ -11,58 +11,55 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import java.util.concurrent.TimeUnit
 
-data class GenerateContentRequest(
-    val contents: List<Content>
+// Groq এর চ্যাট রিকোয়েস্ট ফরম্যাট
+data class GroqChatRequest(
+    val model: String = "llama-3.3-70b-versatile", // বা তুমি যে মডেল ব্যবহার করছ
+    val messages: List<GroqMessage>
 )
 
-data class Content(
-    val role: String = "user",
-    val parts: List<Part>
+data class GroqMessage(
+    val role: String,
+    val content: String
 )
 
-data class Part(
-    val text: String
+data class GroqChatResponse(
+    val choices: List<GroqChoice>
 )
 
-data class GenerateContentResponse(
-    val candidates: List<Candidate>?
+data class GroqChoice(
+    val message: GroqMessage
 )
 
-data class Candidate(
-    val content: Content?
-)
-
-interface GeminiApiService {
-    // ইন্টারফেসকে একদম ফ্রেশ রাখা হলো, কোন কী বা কুয়েরির ঝামেলা এখানে নেই
-    @POST("v1beta/models/gemini-1.5-flash:generateContent")
-    suspend fun generateContent(
-        @Body request: GenerateContentRequest
-    ): GenerateContentResponse
+interface GroqApiService {
+    @POST("v1/chat/completions")
+    suspend fun getChatCompletion(
+        @Body request: GroqChatRequest
+    ): GroqChatResponse
 }
 
 object RetrofitClient {
-    private const val BASE_URL = "https://generativelanguage.googleapis.com/"
+    // বেস ইউআরএল জেমিনি থেকে পরিবর্তন করে Groq এর আসল ইউআরএল দেওয়া হলো
+    private const val BASE_URL = "https://api.groq.com/openai/"
 
-    // গিটহাব সিকিউরিটি বাইপাস করার ৩ টুকরো
-    private const val P1 = "AQ.Ab8RN6LRBpgo19"
-    private const val P2 = "Pe__6REN8Ixiu2x-"
-    private const val P3 = "5mMrZwzm4g1qiqWA-Zeg"
+    // কোডের ভেতর কোনো কী থাকবে না, অল-অটোমেটিক .env ফাইল থেকে রিড করবে
+    private val GROQ_KEY = BuildConfig.GROQ_API_KEY
 
     private val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()
 
-    // এই ইন্টারসেপ্টরটি প্রতিটি রিকোয়েস্টের সাথে অটোমেটিক এপিআই কী জুড়ে দেবে
+    // এই ইন্টারসেপ্টরটি প্রতিবার রিকোয়েস্ট পাঠানোর সময় হেডার হিসেবে Groq API Key যুক্ত করবে
     private val apiKeyInterceptor = Interceptor { chain ->
         val originalRequest = chain.request()
-        val originalUrl = originalRequest.url
-
-        val newUrl = originalUrl.newBuilder()
-            .addQueryParameter("key", "$P1$P2$P3") // এখানে ৩ টুকরো জোড়া লেগে যাবে
-            .build()
+        
+        // এপিআই কী লোড হতে কোনো সমস্যা হয়েছে কি না চেক করার জন্য
+        if (GROQ_KEY.isBlank() || GROQ_KEY == "YOUR_API_KEY") {
+            throw IllegalStateException("Error: Groq API Key রিড করা যায়নি! দয়া করে .env ফাইলটি চেক করুন।")
+        }
 
         val newRequest = originalRequest.newBuilder()
-            .url(newUrl)
+            .header("Authorization", "Bearer $GROQ_KEY") // হেডার হিসেবে সেফলি বসে যাবে
+            .header("Content-Type", "application/json")
             .build()
 
         chain.proceed(newRequest)
@@ -72,15 +69,15 @@ object RetrofitClient {
         .connectTimeout(60, TimeUnit.SECONDS)
         .readTimeout(60, TimeUnit.SECONDS)
         .writeTimeout(60, TimeUnit.SECONDS)
-        .addInterceptor(apiKeyInterceptor) // ইন্টারসেপ্টরটি এখানে যুক্ত করা হলো
+        .addInterceptor(apiKeyInterceptor)
         .build()
 
-    val service: GeminiApiService by lazy {
+    val service: GroqApiService by lazy {
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
-        retrofit.create(GeminiApiService::class.java)
+        retrofit.create(GroqApiService::class.java)
     }
 }
