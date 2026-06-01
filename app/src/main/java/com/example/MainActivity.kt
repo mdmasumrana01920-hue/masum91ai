@@ -1,18 +1,19 @@
-package com.example
+package com.example // আপনার প্রজেক্টের প্যাকেজ নাম ঠিক রাখুন
 
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -211,7 +212,7 @@ fun TopAppBarSection(
     ) {
         Column {
             Text(
-                text = "AURA",
+                text = "FARIYA AI", // আপনার রিকোয়েস্ট অনুযায়ী নাম পরিবর্তন করা হয়েছে
                 fontWeight = FontWeight.Black,
                 fontSize = 20.sp,
                 color = colors.primary,
@@ -367,7 +368,6 @@ fun AssistantTabScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Creative Bold Typography Header Block (Exactly as requested by Bold Typography theme HTML)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -458,7 +458,7 @@ fun AssistantTabScreen(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        // Custom Dynamic Response Card Terminal (Light-lavender Current Command and white Assistant Logic cards combined)
+        // Custom Dynamic Response Card Terminal
         lastLog?.let { log ->
             ResponseTerminalCard(log = log, onReplaySpeak = onReplaySpeak, viewModel = viewModel)
         } ?: run {
@@ -500,7 +500,7 @@ fun AssistantTabScreen(
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        // Footer Listening & Typing input Pill (Pill alignment matching HTML design)
+        // Footer Listening & Typing input Pill
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -548,7 +548,6 @@ fun AssistantTabScreen(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Secondary visual pulse matching HTML style
                 Box(
                     modifier = Modifier
                         .size(38.dp)
@@ -597,7 +596,6 @@ fun AnimatedMicWaveform(
     val infiniteTransition = rememberInfiniteTransition()
     val colors = rememberColorTheme()
 
-    // Pulsing aura animation layers
     val animatedScale1 by infiniteTransition.animateFloat(
         initialValue = 1.0f,
         targetValue = if (isListening) 1.5f else 1.05f,
@@ -622,7 +620,6 @@ fun AnimatedMicWaveform(
             .size(200.dp)
             .clickable(onClick = onClick)
     ) {
-        // Outer Gradient aura
         Box(
             modifier = Modifier
                 .size(110.dp * animatedScale2)
@@ -651,7 +648,6 @@ fun AnimatedMicWaveform(
                 )
         )
 
-        // Bold Core Glowing Orb
         Canvas(
             modifier = Modifier
                 .size(90.dp)
@@ -675,7 +671,6 @@ fun AnimatedMicWaveform(
             }
         }
 
-        // Inner Icon
         Icon(
             imageVector = if (isListening) Icons.Filled.Stop else Icons.Filled.Mic,
             contentDescription = if (isListening) "Stop Listening" else "Start Listening",
@@ -696,7 +691,6 @@ fun ResponseTerminalCard(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // 1. Current Command Lavender bubble (reproducing design HTML style)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -736,7 +730,6 @@ fun ResponseTerminalCard(
             }
         }
 
-        // 2. Assistant Response white logic Card (reproducing HTML style)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -799,7 +792,6 @@ fun ResponseTerminalCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    // Navigate to emails directly if detected
                     Button(
                         onClick = { viewModel.setActiveTab("EMAILS") },
                         colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
@@ -889,7 +881,6 @@ fun EmailsTabScreen(viewModel: AssistantViewModel) {
     var searchQuery by remember { mutableStateOf("") }
     var isShowComposeDialog by remember { mutableStateOf(false) }
 
-    // Filter displayed emails based on query
     val filteredEmails = remember(displayedEmails, searchQuery) {
         if (searchQuery.isBlank()) {
             displayedEmails
@@ -909,7 +900,6 @@ fun EmailsTabScreen(viewModel: AssistantViewModel) {
             .padding(16.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // High-Contrast Bold Search Textbox Pill
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -966,13 +956,11 @@ fun EmailsTabScreen(viewModel: AssistantViewModel) {
                 }
             }
 
-            // Beautiful Tab Pill Selector Row
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 12.dp)
             ) {
-                // Inbox Pillar
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -997,7 +985,6 @@ fun EmailsTabScreen(viewModel: AssistantViewModel) {
 
                 Spacer(modifier = Modifier.width(12.dp))
 
-                // Sent Hub Pillar
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -1021,7 +1008,6 @@ fun EmailsTabScreen(viewModel: AssistantViewModel) {
                 }
             }
 
-            // Dynamic Bold Title
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1049,7 +1035,6 @@ fun EmailsTabScreen(viewModel: AssistantViewModel) {
                 )
             }
 
-            // Emails List View
             if (filteredEmails.isEmpty()) {
                 Box(
                     modifier = Modifier
@@ -1085,7 +1070,6 @@ fun EmailsTabScreen(viewModel: AssistantViewModel) {
             }
         }
 
-        // Action Floating Button for New Message Compose
         FloatingActionButton(
             onClick = { isShowComposeDialog = true },
             containerColor = colors.primary,
@@ -1099,12 +1083,10 @@ fun EmailsTabScreen(viewModel: AssistantViewModel) {
             Icon(Icons.Filled.Edit, contentDescription = "Compose mail")
         }
 
-        // Email detail Dialog Modal
         selectedEmail?.let { email ->
             EmailDetailsDialog(email = email, onClose = { viewModel.selectEmail(null) })
         }
 
-        // Send Compose Email Dialog Modal
         if (isShowComposeDialog) {
             ComposeEmailDialog(
                 onClose = { isShowComposeDialog = false },
@@ -1142,7 +1124,6 @@ fun EmailItemRow(email: Email, onClick: () -> Unit) {
                 .fillMaxWidth(),
             verticalAlignment = Alignment.Top
         ) {
-            // Elegant styled Sender avatar label
             Box(
                 modifier = Modifier
                     .size(44.dp)
@@ -1356,7 +1337,8 @@ fun ComposeEmailDialog(
             Column(
                 modifier = Modifier
                     .padding(20.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -1403,8 +1385,6 @@ fun ComposeEmailDialog(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
-
                 OutlinedTextField(
                     value = subject,
                     onValueChange = { subject = it },
@@ -1419,8 +1399,6 @@ fun ComposeEmailDialog(
                         unfocusedTextColor = colors.textPrimary
                     )
                 )
-
-                Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
                     value = body,
@@ -1478,7 +1456,6 @@ fun LogsTabScreen(viewModel: AssistantViewModel) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Log Actions Headers Controls
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1579,7 +1556,6 @@ fun ConsoleLogItemRow(log: CommandLog) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Displays timestamp
                 Text(
                     text = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(log.timestamp)),
                     fontSize = 11.sp,
@@ -1588,7 +1564,6 @@ fun ConsoleLogItemRow(log: CommandLog) {
                     fontWeight = FontWeight.Bold
                 )
 
-                // Render Action Badge
                 val badgeColor = when (log.detectedAction) {
                     "GMAIL_CHECK" -> colors.primary
                     "GMAIL_SEND" -> colors.secondary
@@ -1681,9 +1656,8 @@ fun CalendarTabScreen(viewModel: AssistantViewModel) {
     var showAddDialog by remember { mutableStateOf(false) }
     var hasPermission by remember { mutableStateOf(viewModel.hasCalendarPermission()) }
     
-    // Permission request launcher
-    val permissionLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
-        contract = androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions()
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         hasPermission = permissions[android.Manifest.permission.READ_CALENDAR] == true &&
                 permissions[android.Manifest.permission.WRITE_CALENDAR] == true
@@ -1701,8 +1675,6 @@ fun CalendarTabScreen(viewModel: AssistantViewModel) {
             .padding(16.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            
-            // Header panel showing Calendar Connection state
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = if (hasPermission) colors.lightPurple.copy(alpha = 0.2f) else colors.surface
@@ -1769,7 +1741,6 @@ fun CalendarTabScreen(viewModel: AssistantViewModel) {
                 }
             }
             
-            // Layout Row for header action trigger info
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1850,7 +1821,6 @@ fun CalendarTabScreen(viewModel: AssistantViewModel) {
             }
         }
         
-        // Add dialog
         if (showAddDialog) {
             AddCalendarEventDialog(
                 colors = colors,
@@ -1862,7 +1832,6 @@ fun CalendarTabScreen(viewModel: AssistantViewModel) {
             )
         }
         
-        // Detail active focus card overlay
         if (selectedEvent != null) {
             CalendarEventDetailDialog(
                 event = selectedEvent!!,
@@ -1910,7 +1879,6 @@ fun CalendarItemRow(
                 .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Priority identifier accent bar
             Box(
                 modifier = Modifier
                     .width(4.dp)
@@ -1977,6 +1945,55 @@ fun CalendarItemRow(
     }
 }
 
+// 🌟 ১. ড্রপ-ডাউন ইয়ার সিলেকশন মেনু কম্পোজেবল (আলাদা করে যোগ করা হয়েছে)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun YearDropdownMenu(
+    selectedYear: Int,
+    onYearSelected: (Int) -> Unit,
+    colors: com.example.ui.theme.ColorTheme
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+    val yearsList = remember { (currentYear..currentYear + 10).toList() }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        OutlinedTextField(
+            value = selectedYear.toString(),
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("বছর নির্বাচন করুন (Year)") },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = colors.primary,
+                unfocusedBorderColor = colors.borderGray,
+                focusedLabelColor = colors.primary
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            yearsList.forEach { year ->
+                DropdownMenuItem(
+                    text = { Text(text = year.toString(), fontWeight = FontWeight.Bold) },
+                    onClick = {
+                        onYearSelected(year)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun AddCalendarEventDialog(
     colors: com.example.ui.theme.ColorTheme,
@@ -1990,6 +2007,10 @@ fun AddCalendarEventDialog(
     
     val startCalendar = remember { Calendar.getInstance() }
     val endCalendar = remember { Calendar.getInstance().apply { add(Calendar.HOUR_OF_DAY, 1) } }
+
+    // 🌟 বছর ট্র্যাক এবং সিঙ্ক করার জন্য স্টেট
+    var selectedStartYear by remember { mutableStateOf(startCalendar.get(Calendar.YEAR)) }
+    var selectedEndYear by remember { mutableStateOf(endCalendar.get(Calendar.YEAR)) }
     
     var startText by remember {
         mutableStateOf(SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.getDefault()).format(startCalendar.time))
@@ -2060,6 +2081,29 @@ fun AddCalendarEventDialog(
                         .fillMaxWidth()
                         .testTag("add_event_desc_input")
                 )
+
+                // 🌟 ২. বছর সিলেক্ট করার জন্য ড্রপডাউন দুটি এখানে বসানো হয়েছে
+                Text("তারিখের বছর সেট করুন (Year Dropdown):", fontSize = 12.sp, color = colors.primary, fontWeight = FontWeight.Bold)
+
+                YearDropdownMenu(
+                    selectedYear = selectedStartYear,
+                    onYearSelected = { year ->
+                        selectedStartYear = year
+                        startCalendar.set(Calendar.YEAR, year)
+                        startText = SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.getDefault()).format(startCalendar.time)
+                    },
+                    colors = colors
+                )
+
+                YearDropdownMenu(
+                    selectedYear = selectedEndYear,
+                    onYearSelected = { year ->
+                        selectedEndYear = year
+                        endCalendar.set(Calendar.YEAR, year)
+                        endText = SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.getDefault()).format(endCalendar.time)
+                    },
+                    colors = colors
+                )
                 
                 // Start selection Row
                 Row(
@@ -2068,6 +2112,7 @@ fun AddCalendarEventDialog(
                         .clickable {
                             showDatePicker(context, startCalendar) { cal ->
                                 showTimePicker(context, cal) { finalCal ->
+                                    selectedStartYear = finalCal.get(Calendar.YEAR) // ড্রপডাউন সিঙ্ক
                                     startText = SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.getDefault()).format(finalCal.time)
                                 }
                             }
@@ -2095,6 +2140,7 @@ fun AddCalendarEventDialog(
                         .clickable {
                             showDatePicker(context, endCalendar) { cal ->
                                 showTimePicker(context, cal) { finalCal ->
+                                    selectedEndYear = finalCal.get(Calendar.YEAR) // ড্রপডাউন সিঙ্ক
                                     endText = SimpleDateFormat("MMM dd, yyyy - hh:mm a", Locale.getDefault()).format(finalCal.time)
                                 }
                             }
